@@ -40,10 +40,12 @@ app.use(session({
 const authRoutes = require('./routes/auth');
 const { router: apiKeyRoutes } = require('./routes/apikey');
 const { router: jwtRoutes } = require('./routes/jwt');
+const { router: bearerRoutes } = require('./routes/bearer');
 
 app.use('/auth', authRoutes);
 app.use('/apikey', apiKeyRoutes);
 app.use('/jwt', jwtRoutes);
+app.use('/bearer', bearerRoutes);
 
 // Test route
 app.get('/', (req, res) => {
