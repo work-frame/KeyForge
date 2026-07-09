@@ -3,6 +3,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const session = require('express-session');
 const pgSession = require('connect-pg-simple')(session);
+const morgan = require('morgan');
 const dotenv = require('dotenv');
 const db = require('./config/db');
 
@@ -11,10 +12,9 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const morgan = require('morgan');
-app.use(morgan('dev'));
 
-// Middleware
+// Middleware (ALWAYS before routes)
+app.use(morgan('dev'));
 app.use(helmet());
 app.use(cors({
   origin: 'http://localhost:3000',
@@ -22,8 +22,6 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Session middleware with PostgreSQL store
 app.use(session({
   store: new pgSession({
     pool: db,
@@ -34,9 +32,16 @@ app.use(session({
   saveUninitialized: false,
   cookie: {
     secure: false,
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    maxAge: 24 * 60 * 60 * 1000
   }
 }));
+
+// Routes (ALWAYS after middleware)
+const authRoutes = require('./routes/auth');
+const { router: apiKeyRoutes } = require('./routes/apikey');
+
+app.use('/auth', authRoutes);
+app.use('/apikey', apiKeyRoutes);
 
 // Test route
 app.get('/', (req, res) => {
@@ -47,7 +52,3 @@ app.get('/', (req, res) => {
 app.listen(PORT, () => {
   console.log(`KeyForge server running on port ${PORT}`);
 });
-
-// Routes
-const authRoutes = require('./routes/auth');
-app.use('/auth', authRoutes);
