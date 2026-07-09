@@ -47,12 +47,14 @@ const { router: apiKeyRoutes } = require('./routes/apikey');
 const { router: jwtRoutes } = require('./routes/jwt');
 const { router: bearerRoutes } = require('./routes/bearer');
 const oauthRoutes = require('./routes/oauth');
+const oidcRoutes = require('./routes/oidc');
 
 app.use('/auth', authRoutes);
 app.use('/apikey', apiKeyRoutes);
 app.use('/jwt', jwtRoutes);
 app.use('/bearer', bearerRoutes);
 app.use('/oauth', oauthRoutes);
+app.use('/oidc', oidcRoutes);
 
 // Test route
 app.get('/', (req, res) => {
