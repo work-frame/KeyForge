@@ -39,9 +39,11 @@ app.use(session({
 // Routes (ALWAYS after middleware)
 const authRoutes = require('./routes/auth');
 const { router: apiKeyRoutes } = require('./routes/apikey');
+const { router: jwtRoutes } = require('./routes/jwt');
 
 app.use('/auth', authRoutes);
 app.use('/apikey', apiKeyRoutes);
+app.use('/jwt', jwtRoutes);
 
 // Test route
 app.get('/', (req, res) => {
