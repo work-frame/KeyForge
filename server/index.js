@@ -5,6 +5,7 @@ const session = require('express-session');
 const pgSession = require('connect-pg-simple')(session);
 const morgan = require('morgan');
 const dotenv = require('dotenv');
+const passport = require('passport');
 const db = require('./config/db');
 
 // Load environment variables
@@ -36,16 +37,22 @@ app.use(session({
   }
 }));
 
+// Passport middleware (AFTER session, BEFORE routes)
+app.use(passport.initialize());
+app.use(passport.session());
+
 // Routes (ALWAYS after middleware)
 const authRoutes = require('./routes/auth');
 const { router: apiKeyRoutes } = require('./routes/apikey');
 const { router: jwtRoutes } = require('./routes/jwt');
 const { router: bearerRoutes } = require('./routes/bearer');
+const oauthRoutes = require('./routes/oauth');
 
 app.use('/auth', authRoutes);
 app.use('/apikey', apiKeyRoutes);
 app.use('/jwt', jwtRoutes);
 app.use('/bearer', bearerRoutes);
+app.use('/oauth', oauthRoutes);
 
 // Test route
 app.get('/', (req, res) => {
